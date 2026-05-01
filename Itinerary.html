@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>China 2026 ✈</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bg: #f5f3ef;
+  --card: #ffffff;
+  --ink: #1a1714;
+  --soft: #8c8279;
+  --border: rgba(0,0,0,0.08);
+  --radius: 16px;
+  --bottom: 64px;
+  --beijing: #c85a2a;
+  --taian: #4a7c59;
+  --nanjing: #7c4a6e;
+  --hangzhou: #2a6e8a;
+  --linhai: #9a7c2a;
+  --tiantai: #2a5a7c;
+  --shanghai: #1a1714;
+  --cat-food: #e8a030;
+  --cat-shop: #2a6e8a;
+  --cat-culture: #7c4a6e;
+  --cat-hike: #4a7c59;
+  --cat-transit: #8c8279;
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; max-width: 430px; margin: 0 auto; padding-bottom: calc(var(--bottom) + 16px); }
+
+.screen { display: none; animation: fadeIn 0.2s ease; }
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* HEADER */
+.app-header { padding: 20px 20px 0; display: flex; align-items: center; justify-content: space-between; }
+.app-title { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.app-sub { font-size: 11px; color: var(--soft); margin-top: 1px; }
+.header-pill { font-size: 11px; font-weight: 700; font-family: 'Syne', sans-serif; padding: 5px 12px; border-radius: 20px; background: var(--ink); color: #fff; }
+.back-btn { display: none; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: var(--soft); background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 0; }
+.back-btn.visible { display: flex; }
+.back-btn::before { content: '←'; font-size: 16px; }
+
+/* MAP */
+.map-wrap { padding: 14px 20px 0; }
+.map-card { background: var(--card); border-radius: var(--radius); border: 0.5px solid var(--border); overflow: hidden; }
+.map-title { font-size: 11px; font-weight: 600; color: var(--soft); padding: 10px 14px 0; text-transform: uppercase; letter-spacing: 0.06em; }
+.map-hint { font-size: 11px; color: var(--soft); padding: 2px 14px 8px; }
+.route-svg { width: 100%; display: block; }
+
+/* SUMMARY PILLS */
+.summary-pills { display: flex; gap: 8px; padding: 14px 20px 0; overflow-x: auto; scrollbar-width: none; }
+.summary-pills::-webkit-scrollbar { display: none; }
+.pill { flex-shrink: 0; background: var(--card); border-radius: 12px; padding: 10px 14px; border: 0.5px solid var(--border); text-align: center; min-width: 88px; }
+.pill-val { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; }
+.pill-lbl { font-size: 10px; color: var(--soft); margin-top: 1px; }
+
+/* CITY LIST */
+.city-list { padding: 14px 20px 0; display: flex; flex-direction: column; gap: 8px; }
+.city-row { background: var(--card); border-radius: var(--radius); border: 0.5px solid var(--border); padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: box-shadow 0.15s, transform 0.1s; }
+.city-row:active { transform: scale(0.99); }
+.city-row:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+.city-color { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.city-row-info { flex: 1; }
+.city-row-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+.city-row-dates { font-size: 11px; color: var(--soft); margin-top: 1px; }
+.city-row-hotel { font-size: 10px; color: var(--soft); margin-top: 3px; font-style: italic; }
+.city-row-cats { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+.city-chevron { font-size: 18px; color: #ccc; }
+
+/* CITY SCREEN */
+.city-header-bar { padding: 14px 20px 0; }
+.city-header-name { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+.city-header-meta { font-size: 12px; color: var(--soft); margin-top: 2px; }
+.city-header-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.city-hotel-confirm { font-size: 11px; color: #2a7c2a; background: #e8f5e8; border: 0.5px solid #b8ddb8; border-radius: 6px; padding: 5px 10px; margin: 8px 20px 0; display: flex; align-items: center; gap: 5px; }
+
+/* FILTER */
+.filter-bar { display: flex; gap: 8px; padding: 12px 20px 0; overflow-x: auto; scrollbar-width: none; }
+.filter-bar::-webkit-scrollbar { display: none; }
+.chip { flex-shrink: 0; font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--card); color: var(--soft); cursor: pointer; transition: all 0.15s; white-space: nowrap; font-family: 'DM Sans', sans-serif; }
+.chip.active { border-color: var(--ink); background: var(--ink); color: #fff; }
+.chip.food.active { background: var(--cat-food); border-color: var(--cat-food); }
+.chip.shop.active { background: var(--cat-shop); border-color: var(--cat-shop); }
+.chip.culture.active { background: var(--cat-culture); border-color: var(--cat-culture); }
+.chip.hike.active { background: var(--cat-hike); border-color: var(--cat-hike); }
+.chip.transit.active { background: var(--cat-transit); border-color: var(--cat-transit); }
+
+/* DAY CARDS */
+.days-wrap { padding: 10px 20px 0; display: flex; flex-direction: column; gap: 8px; }
+.day-card { background: var(--card); border-radius: var(--radius); border: 0.5px solid var(--border); overflow: hidden; cursor: pointer; transition: box-shadow 0.15s, transform 0.1s; }
+.day-card:active { transform: scale(0.99); }
+.day-card.hidden { display: none; }
+.card-top { display: flex; align-items: center; gap: 12px; padding: 14px 14px 0; }
+.card-num { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; color: var(--soft); min-width: 40px; }
+.card-info { flex: 1; min-width: 0; }
+.card-date { font-size: 11px; color: var(--soft); }
+.card-label { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-chev { font-size: 18px; color: #ccc; transition: transform 0.25s; flex-shrink: 0; }
+.card-chev.open { transform: rotate(90deg); color: var(--ink); }
+.card-cats { display: flex; gap: 5px; padding: 8px 14px 12px; flex-wrap: wrap; }
+.cat-tag { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 500; padding: 3px 8px; border-radius: 20px; }
+.cat-tag.food { background: rgba(232,160,48,0.12); color: #9a6000; }
+.cat-tag.shop { background: rgba(42,110,138,0.1); color: #1a5a7a; }
+.cat-tag.culture { background: rgba(124,74,110,0.1); color: #5a2a50; }
+.cat-tag.hike { background: rgba(74,124,89,0.1); color: #2a5a3a; }
+.cat-tag.transit { background: rgba(140,130,121,0.1); color: #5a5248; }
+
+/* CARD BODY */
+.card-body { display: none; border-top: 0.5px solid var(--border); padding: 14px; background: #faf8f5; }
+.card-body.open { display: block; }
+.tl { display: flex; flex-direction: column; margin-bottom: 10px; }
+.tl-row { display: flex; gap: 10px; }
+.tl-l { display: flex; flex-direction: column; align-items: center; min-width: 42px; }
+.tl-t { font-size: 10px; color: var(--soft); text-align: right; width: 42px; padding-top: 1px; white-space: nowrap; }
+.tl-d { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); margin: 4px auto 0; flex-shrink: 0; }
+.tl-d.food { background: var(--cat-food); }
+.tl-d.shop { background: var(--cat-shop); }
+.tl-d.culture { background: var(--cat-culture); }
+.tl-d.hike { background: var(--cat-hike); }
+.tl-d.transit { background: var(--cat-transit); }
+.tl-ln { flex: 1; width: 1px; background: var(--border); margin: 2px auto; min-height: 8px; }
+.tl-c { font-size: 13px; padding: 0 0 11px; flex: 1; line-height: 1.5; }
+.itag { display: inline-block; font-size: 9px; padding: 1px 5px; border-radius: 8px; margin-left: 5px; vertical-align: middle; font-weight: 500; }
+.itag.food { background: rgba(232,160,48,0.15); color: #9a6000; }
+.itag.shop { background: rgba(42,110,138,0.12); color: #1a5a7a; }
+.itag.culture { background: rgba(124,74,110,0.12); color: #5a2a50; }
+.itag.hike { background: rgba(74,124,89,0.12); color: #2a5a3a; }
+.itag.transit { background: rgba(140,130,121,0.12); color: #5a5248; }
+
+/* ROUTES */
+.routes-wrap { margin-bottom: 10px; display: flex; flex-direction: column; gap: 5px; }
+.route-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.route-lbl { font-size: 11px; color: var(--soft); flex: 1; min-width: 100px; }
+.map-btns { display: flex; gap: 4px; flex-shrink: 0; }
+.mb { font-size: 10px; font-weight: 600; padding: 4px 9px; border-radius: 20px; text-decoration: none; border: 1px solid; white-space: nowrap; transition: all 0.15s; }
+.mb.goo { color: #1a73e8; background: #e8f0fe; border-color: #c5d5f5; }
+.mb.goo:hover { background: #1a73e8; color: #fff; }
+.mb.gao { color: #1677ff; background: #e8f0ff; border-color: #b8d0f8; }
+.mb.gao:hover { background: #1677ff; color: #fff; }
+.mb.bk { color: #6b3600; background: #faeada; border-color: #e0c8b0; }
+.mb.bk:hover { background: #6b3600; color: #fff; }
+
+/* HOTEL / NOTES */
+.hotel-row { font-size: 12px; color: var(--soft); border-top: 0.5px solid var(--border); padding-top: 8px; margin-top: 4px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px; }
+.hotel-row a { color: var(--cat-shop); text-decoration: none; font-weight: 500; }
+.note-box { font-size: 11px; border-radius: 8px; padding: 8px 10px; margin-top: 8px; line-height: 1.6; }
+.note-lug { background: #f5f0e8; border: 0.5px solid #e0d8c8; color: #6a5a40; }
+.note-opt { background: #eef4f8; border: 0.5px solid #c8dce8; color: #2a5070; }
+.note-opt strong { display: block; margin-bottom: 3px; font-size: 12px; color: #1a3a50; }
+
+/* COSTS */
+.costs-wrap { padding: 16px 20px 0; }
+.screen-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 14px; }
+.person-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.pc { background: var(--card); border-radius: var(--radius); padding: 14px; border: 0.5px solid var(--border); }
+.pc-name { font-size: 11px; font-weight: 600; color: var(--soft); margin-bottom: 8px; }
+.pc-row { display: flex; justify-content: space-between; font-size: 11px; padding: 3px 0; border-bottom: 0.5px solid rgba(0,0,0,0.04); }
+.pc-row:last-child { border: none; font-weight: 600; font-size: 13px; padding-top: 6px; }
+.pc-row .l { color: var(--soft); }
+.cost-table { background: var(--card); border-radius: var(--radius); border: 0.5px solid var(--border); overflow: hidden; margin-bottom: 14px; }
+.ct-title { font-size: 13px; font-weight: 700; font-family: 'Syne', sans-serif; padding: 12px 14px; border-bottom: 0.5px solid var(--border); }
+.ct-row { display: flex; justify-content: space-between; padding: 8px 14px; font-size: 12px; border-bottom: 0.5px solid rgba(0,0,0,0.04); }
+.ct-row:last-child { border: none; font-weight: 600; font-size: 13px; background: #faf8f5; }
+.ct-row .l { color: var(--soft); }
+
+/* LUGGAGE */
+.lug-wrap { padding: 16px 20px 0; }
+.lug-step { background: var(--card); border-radius: var(--radius); border: 0.5px solid var(--border); padding: 14px; margin-bottom: 10px; display: flex; gap: 12px; }
+.lug-icon { font-size: 22px; flex-shrink: 0; }
+.lug-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.lug-sub { font-size: 11px; color: var(--soft); line-height: 1.5; }
+.lug-badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; margin-top: 5px; }
+.lb-ship { background: #faeada; color: #6b3600; }
+.lb-carry { background: #e4f0da; color: #2a5a3a; }
+.lb-star { background: var(--ink); color: #fff; }
+
+/* INFO */
+.info-wrap { padding: 16px 20px 0; }
+.info-card { background: var(--card); border-radius: var(--radius); border: 0.5px solid var(--border); padding: 14px; margin-bottom: 12px; }
+.info-card h3 { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+.info-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; font-size: 12px; color: var(--soft); }
+.lb { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+.lb-g { background: #e8f0fe; color: #1a73e8; border: 1px solid #c5d5f5; }
+.lb-a { background: #e8f0ff; color: #1677ff; border: 1px solid #b8d0f8; }
+.lb-b { background: #faeada; color: #6b3600; border: 1px solid #e0c8b0; }
+.cat-leg { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.cl { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--soft); }
+.cl-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* BOTTOM NAV */
+.bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; height: var(--bottom); background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); border-top: 0.5px solid var(--border); display: flex; align-items: stretch; z-index: 200; }
+.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; border: none; background: none; font-family: 'DM Sans', sans-serif; color: var(--soft); transition: color 0.15s; }
+.nav-btn.active { color: var(--ink); }
+.nav-icon { font-size: 20px; }
+.nav-lbl { font-size: 10px; font-weight: 500; }
+
+@media (max-width: 380px) { .person-cards { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div class="app-header">
+    <div>
+      <div class="app-title">China 2026 ✈</div>
+      <div class="app-sub">Jun 14 – Jun 29 · 2 people · 16 days</div>
+    </div>
+    <div class="header-pill">7 cities</div>
+  </div>
+
+  <div class="map-wrap">
+    <div class="map-card">
+      <div class="map-title">Your route</div>
+      <div class="map-hint">Tap a city to explore</div>
+      <svg class="route-svg" viewBox="0 0 390 320" xmlns="http://www.w3.org/2000/svg">
+        <rect width="390" height="320" fill="#faf8f5"/>
+        <path d="M60,40 L120,30 L180,20 L240,25 L290,40 L330,70 L350,110 L360,150 L350,190 L330,220 L300,250 L260,270 L220,280 L180,285 L150,275 L120,260 L90,240 L70,210 L50,180 L40,150 L45,110 L55,75 Z" fill="#ede9e1" stroke="#ddd8d0" stroke-width="1.5" opacity="0.6"/>
+        <!-- Flight AMS→BEJ -->
+        <path d="M30,50 Q90,20 165,80" fill="none" stroke="#c85a2a" stroke-width="1.5" stroke-dasharray="5 3" opacity="0.5"/>
+        <text x="58" y="42" fill="#c85a2a" font-size="8" font-family="DM Sans, sans-serif" opacity="0.7">✈ Brussels</text>
+        <!-- Route lines -->
+        <line x1="165" y1="80" x2="200" y2="130" stroke="#ddd8d0" stroke-width="1.5"/>
+        <line x1="200" y1="130" x2="215" y2="165" stroke="#ddd8d0" stroke-width="1.5"/>
+        <line x1="215" y1="165" x2="215" y2="195" stroke="#ddd8d0" stroke-width="1.5"/>
+        <line x1="215" y1="195" x2="210" y2="218" stroke="#ddd8d0" stroke-width="1.5"/>
+        <line x1="210" y1="218" x2="220" y2="234" stroke="#ddd8d0" stroke-width="1.5"/>
+        <line x1="220" y1="234" x2="248" y2="192" stroke="#ddd8d0" stroke-width="1.5"/>
+        <!-- Flight home -->
+        <path d="M248,192 Q300,155 350,75" fill="none" stroke="#1a1714" stroke-width="1" stroke-dasharray="4 3" opacity="0.3"/>
+        <text x="308" y="110" fill="#8c8279" font-size="7" font-family="DM Sans, sans-serif" opacity="0.8">✈ Russia</text>
+        <text x="310" y="120" fill="#8c8279" font-size="7" font-family="DM Sans, sans-serif" opacity="0.8">✈ Milan</text>
+        <!-- Train icons -->
+        <text x="175" y="108" fill="#8c8279" font-size="10" opacity="0.5">🚄</text>
+        <text x="185" y="148" fill="#8c8279" font-size="10" opacity="0.5">🚄</text>
+        <!-- Beijing -->
+        <g onclick="openCity('beijing')" style="cursor:pointer">
+          <rect x="120" y="48" width="90" height="44" fill="transparent"/>
+          <circle cx="165" cy="80" r="14" fill="white" stroke="#c85a2a" stroke-width="2"/>
+          <circle cx="165" cy="80" r="6" fill="#c85a2a"/>
+          <text x="165" y="64" text-anchor="middle" fill="#c85a2a" font-size="9" font-weight="700" font-family="Syne, sans-serif">Beijing</text>
+          <text x="165" y="55" text-anchor="middle" fill="#8c8279" font-size="7" font-family="DM Sans, sans-serif">Jun 14–19</text>
+        </g>
+        <!-- Tai'an -->
+        <g onclick="openCity('taian')" style="cursor:pointer">
+          <rect x="188" y="118" width="80" height="30" fill="transparent"/>
+          <circle cx="200" cy="130" r="10" fill="white" stroke="#4a7c59" stroke-width="2"/>
+          <circle cx="200" cy="130" r="4.5" fill="#4a7c59"/>
+          <text x="215" y="128" fill="#4a7c59" font-size="8.5" font-weight="700" font-family="Syne, sans-serif">Tai'an</text>
+          <text x="215" y="138" fill="#8c8279" font-size="7" font-family="DM Sans, sans-serif">Jun 20</text>
+        </g>
+        <!-- Nanjing -->
+        <g onclick="openCity('nanjing')" style="cursor:pointer">
+          <rect x="203" y="153" width="85" height="28" fill="transparent"/>
+          <circle cx="215" cy="165" r="10" fill="white" stroke="#7c4a6e" stroke-width="2"/>
+          <circle cx="215" cy="165" r="4.5" fill="#7c4a6e"/>
+          <text x="228" y="163" fill="#7c4a6e" font-size="8.5" font-weight="700" font-family="Syne, sans-serif">Nanjing</text>
+          <text x="228" y="173" fill="#8c8279" font-size="7" font-family="DM Sans, sans-serif">Jun 21</text>
+        </g>
+        <!-- Hangzhou -->
+        <g onclick="openCity('hangzhou')" style="cursor:pointer">
+          <rect x="203" y="183" width="95" height="28" fill="transparent"/>
+          <circle cx="215" cy="195" r="10" fill="white" stroke="#2a6e8a" stroke-width="2"/>
+          <circle cx="215" cy="195" r="4.5" fill="#2a6e8a"/>
+          <text x="228" y="193" fill="#2a6e8a" font-size="8.5" font-weight="700" font-family="Syne, sans-serif">Hangzhou</text>
+          <text x="228" y="203" fill="#8c8279" font-size="7" font-family="DM Sans, sans-serif">Jun 22–23</text>
+        </g>
+        <!-- Linhai -->
+        <g onclick="openCity('linhai')" style="cursor:pointer">
+          <rect x="100" y="206" width="120" height="26" fill="transparent"/>
+          <circle cx="210" cy="218" r="9" fill="white" stroke="#9a7c2a" stroke-width="2"/>
+          <circle cx="210" cy="218" r="4" fill="#9a7c2a"/>
+          <text x="150" y="216" text-anchor="end" fill="#9a7c2a" font-size="8.5" font-weight="700" font-family="Syne, sans-serif">Linhai</text>
+          <text x="150" y="226" text-anchor="end" fill="#8c8279" font-size="7" font-family="DM Sans, sans-serif">Jun 23–25</text>
+        </g>
+        <!-- Tiantai -->
+        <g onclick="openCity('tiantai')" style="cursor:pointer">
+          <rect x="208" y="222" width="90" height="26" fill="transparent"/>
+          <circle cx="220" cy="234" r="8" fill="white" stroke="#2a5a7c" stroke-width="2"/>
+          <circle cx="220" cy="234" r="3.5" fill="#2a5a7c"/>
+          <text x="232" y="232" fill="#2a5a7c" font-size="8.5" font-weight="700" font-family="Syne, sans-serif">Tiantai</text>
+          <text x="232" y="242" fill="#8c8279" font-size="7" font-family="DM Sans, sans-serif">Jun 26</text>
+        </g>
+        <!-- Shanghai -->
+        <g onclick="openCity('shanghai')" style="cursor:pointer">
+          <rect x="232" y="177" width="105" height="30" fill="transparent"/>
+          <circle cx="248" cy="192" r="13" fill="white" stroke="#1a1714" stroke-width="2"/>
+          <circle cx="248" cy="192" r="5.5" fill="#1a1714"/>
+          <text x="264" y="190" fill="#1a1714" font-size="9" font-weight="700" font-family="Syne, sans-serif">Shanghai</text>
+          <text x="264" y="200" fill="#8c8279" font-size="7" font-family="DM Sans, sans-serif">Jun 27–29</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="summary-pills">
+    <div class="pill"><div class="pill-val">~$2,694</div><div class="pill-lbl">combined</div></div>
+    <div class="pill"><div class="pill-val">~$1,409</div><div class="pill-lbl">Person A · Russia</div></div>
+    <div class="pill"><div class="pill-val">~$1,285</div><div class="pill-lbl">Person B · Milan</div></div>
+    <div class="pill"><div class="pill-val">7</div><div class="pill-lbl">cities</div></div>
+    <div class="pill"><div class="pill-val">6</div><div class="pill-lbl">trains</div></div>
+    <div class="pill"><div class="pill-val">✅ x7</div><div class="pill-lbl">hotels confirmed</div></div>
+  </div>
+
+  <div class="city-list" id="cityList"></div>
+</div>
+
+<!-- CITY SCREEN -->
+<div id="screen-city" class="screen">
+  <div class="app-header">
+    <button class="back-btn visible" onclick="goHome()">Back to map</button>
+  </div>
+  <div class="city-header-bar" id="cityHeaderBar"></div>
+  <div class="city-hotel-confirm" id="cityHotelConfirm"></div>
+  <div class="filter-bar" id="filterBar"></div>
+  <div class="days-wrap" id="daysWrap"></div>
+</div>
+
+<!-- COSTS -->
+<div id="screen-costs" class="screen">
+  <div class="costs-wrap">
+    <div class="screen-title">💰 Costs</div>
+    <div class="person-cards">
+      <div class="pc">
+        <div class="pc-name">✈ Person A · Russia</div>
+        <div class="pc-row"><span class="l">Gas to Brussels</span><span>~$16</span></div>
+        <div class="pc-row"><span class="l">Flight in (€445)</span><span>~$483</span></div>
+        <div class="pc-row"><span class="l">Hotels</span><span>~$270</span></div>
+        <div class="pc-row"><span class="l">Trains</span><span>$129</span></div>
+        <div class="pc-row"><span class="l">Cable car + Didi</span><span>~$24</span></div>
+        <div class="pc-row"><span class="l">SF Express</span><span>~$27</span></div>
+        <div class="pc-row"><span class="l">Flight home → Russia</span><span>$460</span></div>
+        <div class="pc-row"><span class="l">Total</span><span>~$1,409</span></div>
+      </div>
+      <div class="pc">
+        <div class="pc-name">✈ Person B · Milan</div>
+        <div class="pc-row"><span class="l">Gas to Brussels</span><span>~$16</span></div>
+        <div class="pc-row"><span class="l">Flight in (€445)</span><span>~$483</span></div>
+        <div class="pc-row"><span class="l">Hotels</span><span>~$270</span></div>
+        <div class="pc-row"><span class="l">Trains</span><span>$129</span></div>
+        <div class="pc-row"><span class="l">Cable car + Didi</span><span>~$24</span></div>
+        <div class="pc-row"><span class="l">SF Express</span><span>~$27</span></div>
+        <div class="pc-row"><span class="l">Flight home → Milan</span><span>~$336</span></div>
+        <div class="pc-row"><span class="l">Total</span><span>~$1,285</span></div>
+      </div>
+    </div>
+    <div class="cost-table">
+      <div class="ct-title">Hotels — confirmed bookings</div>
+      <div class="ct-row"><span class="l">Beijing — Hedeyuan Courtyard (5 nights)</span><span>€219.63</span></div>
+      <div class="ct-row"><span class="l">Tai'an — Juntels Hongmen (1 night)</span><span>€36.88</span></div>
+      <div class="ct-row"><span class="l">Nanjing — Qinhuai Light Residence (1 night)</span><span>$44.34</span></div>
+      <div class="ct-row"><span class="l">Hangzhou — Yiting Garden Hotel (1 night)</span><span>$34.07</span></div>
+      <div class="ct-row"><span class="l">Linhai — Jinjiang Inn (3 nights)</span><span>$75.96</span></div>
+      <div class="ct-row"><span class="l">Tiantai — Atour Hotel (1 night)</span><span>$49.03</span></div>
+      <div class="ct-row"><span class="l">Shanghai — CitiGO Xujiahui (1 night)</span><span>$56.22</span></div>
+      <div class="ct-row"><span class="l">Total hotels (both people)</span><span>~$539</span></div>
+    </div>
+    <div class="cost-table">
+      <div class="ct-title">Full breakdown — both people</div>
+      <div class="ct-row"><span class="l">Gas to Brussels × 2</span><span>~$32</span></div>
+      <div class="ct-row"><span class="l">Flights in × 2 (€445 each)</span><span>~$966</span></div>
+      <div class="ct-row"><span class="l">All hotels (confirmed)</span><span>~$539</span></div>
+      <div class="ct-row"><span class="l">Beijing → Tai'an trains × 2</span><span>$68</span></div>
+      <div class="ct-row"><span class="l">Tai'an → Nanjing trains × 2</span><span>$80</span></div>
+      <div class="ct-row"><span class="l">Nanjing → Hangzhou trains × 2</span><span>$20</span></div>
+      <div class="ct-row"><span class="l">Hangzhou → Linhai trains × 2</span><span>$24</span></div>
+      <div class="ct-row"><span class="l">Linhai → Tiantai trains × 2</span><span>$6</span></div>
+      <div class="ct-row"><span class="l">Taizhou → Shanghai trains × 2</span><span>$60</span></div>
+      <div class="ct-row"><span class="l">Mt Tai cable car × 2</span><span>~$28</span></div>
+      <div class="ct-row"><span class="l">Yanbang + Yandang Didi × 2</span><span>$40</span></div>
+      <div class="ct-row"><span class="l">SF Express luggage × 2</span><span>~$54</span></div>
+      <div class="ct-row"><span class="l">Flight home A → Russia</span><span>$460</span></div>
+      <div class="ct-row"><span class="l">Flight home B → Milan</span><span>~$336</span></div>
+      <div class="ct-row"><span class="l">Grand total (2 people)</span><span>~$2,694</span></div>
+    </div>
+    <p style="font-size:11px;color:var(--soft);text-align:center;padding-bottom:8px">Excl. food, entrance fees & spa night</p>
+  </div>
+</div>
+
+<!-- LUGGAGE -->
+<div id="screen-luggage" class="screen">
+  <div class="lug-wrap">
+    <div class="screen-title">🧳 Luggage plan</div>
+    <p style="font-size:12px;color:var(--soft);margin-bottom:14px">Ship big bag with SF Express (顺丰). Ask hotel reception to arrange. ~¥20–60 per bag per leg.</p>
+    <div class="lug-step"><div class="lug-icon">🏨</div><div><div class="lug-title">Beijing — 5 nights</div><div class="lug-sub">Keep all bags at Hedeyuan Courtyard Hotel</div><div class="lug-badge lb-carry">Carry all</div></div></div>
+    <div class="lug-step"><div class="lug-icon">📦</div><div><div class="lug-title">Beijing → Tai'an</div><div class="lug-sub">Ship big bag night before to Juntels Hongmen. Only day pack + carry-on for Mt Tai hike</div><div class="lug-badge lb-ship">Ship ~$5</div></div></div>
+    <div class="lug-step"><div class="lug-icon">📦</div><div><div class="lug-title">Tai'an → Nanjing</div><div class="lug-sub">Ship big bag morning of to Qinhuai Light Residence</div><div class="lug-badge lb-ship">Ship ~$5</div></div></div>
+    <div class="lug-step"><div class="lug-icon">🎒</div><div><div class="lug-title">Nanjing → Hangzhou</div><div class="lug-sub">Only 1hr train — carry everything to Yiting Garden Hotel</div><div class="lug-badge lb-carry">Carry all</div></div></div>
+    <div class="lug-step"><div class="lug-icon">⭐</div><div><div class="lug-title">Hangzhou → Linhai</div><div class="lug-sub">Most important! Ship to Jinjiang Inn — 3 days of hiking with just a day pack</div><div class="lug-badge lb-star">⭐ Ship ~$6</div></div></div>
+    <div class="lug-step"><div class="lug-icon">📦</div><div><div class="lug-title">Linhai → Shanghai (direct)</div><div class="lug-sub">Ship direct to CitiGO Xujiahui while doing Tiantai. Reunited on arrival 🎉</div><div class="lug-badge lb-ship">Ship ~$8</div></div></div>
+    <div class="lug-step"><div class="lug-icon">✈</div><div><div class="lug-title">Shanghai → Airports</div><div class="lug-sub">Hotel stores bags overnight (confirmed: CitiGO has luggage storage). Collect before Didi to PVG</div><div class="lug-badge lb-carry">Carry all</div></div></div>
+    <div class="cost-table" style="margin-top:4px"><div class="ct-title">Estimated total</div><div class="ct-row"><span class="l">2 bags × 3 ship legs</span><span>~$48–60</span></div></div>
+  </div>
+</div>
+
+<!-- INFO -->
+<div id="screen-info" class="screen">
+  <div class="info-wrap">
+    <div class="screen-title">ℹ️ Guide</div>
+    <div class="info-card">
+      <h3>✈ Flights</h3>
+      <div style="font-size:12px;color:var(--soft);line-height:1.8">
+        <strong style="color:var(--ink)">Outbound:</strong> Both fly Brussels → Beijing · €445pp · Jun 14<br>
+        <strong style="color:var(--ink)">Drive to airport:</strong> €15pp gas (Person B drives)<br>
+        <strong style="color:var(--ink)">Person A home:</strong> PVG → Russia · $460 · Jun 29 · 11:40am<br>
+        <strong style="color:var(--ink)">Person B home:</strong> PVG → Milan · €310 · Jun 29 · 10:55am<br>
+        <strong style="color:var(--ink)">⚠️ Both from Pudong (PVG)</strong> — leave spa by 6am
+      </div>
+    </div>
+    <div class="info-card">
+      <h3>🏨 Hotels — all ✅ foreigner confirmed</h3>
+      <div style="font-size:12px;color:var(--soft);line-height:1.9">
+        Beijing · Hedeyuan Courtyard — €219.63 / 5 nights<br>
+        Tai'an · Juntels Hongmen — €36.88 / 1 night<br>
+        Nanjing · Qinhuai Light Residence — $44.34 / 1 night<br>
+        Hangzhou · Yiting Garden Hotel — $34.07 / 1 night<br>
+        Linhai · Jinjiang Inn Chonghemen — $75.96 / 3 nights<br>
+        Tiantai · Atour Hotel — $49.03 / 1 night<br>
+        Shanghai · CitiGO Xujiahui — $56.22 / 1 night
+      </div>
+    </div>
+    <div class="info-card">
+      <h3>🗺 Map buttons</h3>
+      <div class="info-row"><span class="lb lb-g">🌍 Google</span>Plan at home before the trip</div>
+      <div class="info-row"><span class="lb lb-a">🇨🇳 Gaode</span>Navigate in China — Google is blocked</div>
+      <div class="info-row"><span class="lb lb-b">🚄 Book</span>Train tickets on Trip.com</div>
+    </div>
+    <div class="info-card">
+      <h3>🏷 Categories</h3>
+      <div class="cat-leg">
+        <div class="cl"><div class="cl-dot" style="background:var(--cat-food)"></div>Food</div>
+        <div class="cl"><div class="cl-dot" style="background:var(--cat-shop)"></div>Shopping</div>
+        <div class="cl"><div class="cl-dot" style="background:var(--cat-culture)"></div>Culture</div>
+        <div class="cl"><div class="cl-dot" style="background:var(--cat-hike)"></div>Hiking</div>
+        <div class="cl"><div class="cl-dot" style="background:var(--cat-transit)"></div>Transit</div>
+      </div>
+    </div>
+    <div class="info-card">
+      <h3>🔲 Still to decide</h3>
+      <div style="font-size:12px;color:var(--soft);line-height:1.8">
+        • Jun 22–23 — Hangzhou shopping combo: A+C / A+B / B+C<br>
+        • Jun 28–29 — Spa venue near Pudong (Newstar Pudong recommended — closest to PVG). Leave by 6am for flights
+      </div>
+    </div>
+    <div class="info-card">
+      <h3>📱 Install as app</h3>
+      <div style="font-size:12px;color:var(--soft);line-height:1.8">
+        <strong style="color:var(--ink)">iPhone:</strong> Safari → Share → "Add to Home Screen"<br>
+        <strong style="color:var(--ink)">Android:</strong> Chrome → ⋮ → "Add to Home Screen"
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--soft);text-align:center;padding:8px 0 16px">Generated with Claude ✦</p>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="switchScreen('home',this)"><span class="nav-icon">🗺</span><span class="nav-lbl">Map</span></button>
+  <button class="nav-btn" onclick="switchScreen('costs',this)"><span class="nav-icon">💰</span><span class="nav-lbl">Costs</span></button>
+  <button class="nav-btn" onclick="switchScreen('luggage',this)"><span class="nav-icon">🧳</span><span class="nav-lbl">Luggage</span></button>
+  <button class="nav-btn" onclick="switchScreen('info',this)"><span class="nav-icon">ℹ️</span><span class="nav-lbl">Guide</span></button>
+</nav>
+
+<script>
+const G=(wps,m)=>'https://www.google.com/maps/dir/'+wps.map(w=>encodeURIComponent(w)).join('/')+'/?' +'&travelmode='+(m==='transit'?'transit':m==='walking'?'walking':'driving');
+const GS=q=>'https://www.google.com/maps/search/'+encodeURIComponent(q);
+const A=(wps,m)=>wps.length>=2?`https://uri.amap.com/navigation?from=${encodeURIComponent(wps[0])}&to=${encodeURIComponent(wps[wps.length-1])}&mode=${m==='transit'?'1':m==='walking'?'3':'0'}&src=trip`:`https://uri.amap.com/search?keyword=${encodeURIComponent(wps[0])}`;
+const AS=q=>`https://uri.amap.com/search?keyword=${encodeURIComponent(q)}&src=trip`;
+
+const cities = {
+  beijing:{name:'Beijing',color:'#c85a2a',dates:'Jun 14–19 · Days 1–6',hotel:'Hedeyuan Courtyard Hotel · €219.63 / 5 nights',cats:['food','culture','shop'],
+    days:[
+      {num:1,date:'Jun 14, Sun',label:'Brussels ✈ Beijing',cats:['transit'],
+       items:[{t:'morning',txt:'Drive to Brussels Airport — €15pp gas',d:'transit',tag:'transit'},{t:'afternoon',txt:'Fly Brussels → Beijing Capital Airport (PEK) · €445pp',d:'transit',tag:'transit'},{t:'overnight',txt:'In-flight overnight — arrive early morning Jun 15',d:''}],
+       routes:[{lbl:'✈ Brussels Airport BRU',type:'place',g:GS('Brussels Airport Zaventem'),a:AS('布鲁塞尔机场')}],
+       hotel:null,luggage:null,options:null},
+      {num:2,date:'Jun 15, Mon',label:'Arrive Beijing — rest & adapt',cats:['food','transit'],
+       items:[{t:'4:30am',txt:'Land at Beijing Capital Airport (PEK)',d:''},{t:'6am',txt:'Airport Express → drop bags at Hedeyuan Courtyard Hotel',d:''},{t:'6:30am',txt:'Jianbing street crepe 🥞',d:'food',tag:'food'},{t:'7am',txt:'Jingshan Park — sunrise, tai chi, Forbidden City panorama',d:'culture',tag:'culture'},{t:'2pm',txt:'Check in (from 14:00), nap — room booked from Jun 15 ✅',d:''},{t:'5pm',txt:'Hutong wander near hotel, explore Qianmen area',d:''},{t:'7pm',txt:'Lamb skewers + local beer 🍺',d:'food',tag:'food'}],
+       routes:[{lbl:'🚇 Airport → Hedeyuan Courtyard Hotel',type:'nav',g:G(['Beijing Capital International Airport','Zhushikou, Xicheng, Beijing'],'transit'),a:A(['北京首都国际机场','珠市口,西城区,北京'],'transit')},{lbl:'🚶 Hotel → Jingshan Park',type:'nav',g:G(['Zhushikou, Xicheng, Beijing','Jingshan Park, Beijing'],'walking'),a:A(['珠市口,北京','景山公园,北京'],'walking')}],
+       hotel:{name:'Hedeyuan Courtyard Hotel',url:'https://www.trip.com/hotels/beijing-hotel-detail-841915/',price:'€219.63 / 5 nights total'},
+       luggage:null,options:null},
+      {num:3,date:'Jun 16, Tue',label:'Imperial Core',cats:['culture','food','shop'],
+       items:[{t:'8:30am',txt:'Tiananmen Square — book in advance, passport required',d:'culture',tag:'culture'},{t:'10am',txt:'Forbidden City — book 1 week ahead, closed Mondays ✅',d:'culture',tag:'culture'},{t:'12:30pm',txt:'Zhajiangmian (Beijing noodles) near north gate 🍜',d:'food',tag:'food'},{t:'2pm',txt:'Jingshan Park — Forbidden City from above',d:'culture',tag:'culture'},{t:'3:30pm',txt:'Nanluoguxiang hutong — indie clothing boutiques',d:'shop',tag:'shop'},{t:'4:30pm',txt:'Silk Market (metro line 1 → Yonganli) — bargaining!',d:'shop',tag:'shop'},{t:'7pm',txt:'Lamb skewers at Wangfujing night market',d:'food',tag:'food'}],
+       routes:[{lbl:'🚇 Hotel → Tiananmen Square',type:'nav',g:G(['Zhushikou, Xicheng, Beijing','Tiananmen Square, Beijing'],'transit'),a:A(['珠市口,北京','天安门广场,北京'],'transit')},{lbl:'🚶 Forbidden City → Jingshan → Nanluoguxiang',type:'nav',g:G(['Forbidden City, Beijing','Jingshan Park, Beijing','Nanluoguxiang, Dongcheng, Beijing'],'walking'),a:A(['故宫,北京','南锣鼓巷,北京'],'walking')},{lbl:'🚇 Nanluoguxiang → Silk Market',type:'nav',g:G(['Nanluoguxiang, Dongcheng, Beijing','Silk Street Market, Chaoyang, Beijing'],'transit'),a:A(['南锣鼓巷,北京','秀水街,朝阳区,北京'],'transit')}],
+       hotel:{name:'Hedeyuan Courtyard Hotel',url:'https://www.trip.com/hotels/beijing-hotel-detail-841915/',price:'incl.'},luggage:null,options:null},
+      {num:4,date:'Jun 17, Wed',label:'Great Wall + Peking Duck',cats:['culture','food'],
+       items:[{t:'7am',txt:'Metro + Didi to Mutianyu Great Wall (~90min)',d:''},{t:'9am',txt:'Mutianyu Great Wall — cable car up, hike the wall 🏯',d:'culture',tag:'culture'},{t:'1pm',txt:'Toboggan down (optional!) + lunch in village below',d:'food',tag:'food'},{t:'5pm',txt:'Back in Beijing',d:''},{t:'7pm',txt:'Peking duck — book Dadong or Duck de Chine in advance 🦆',d:'food',tag:'food'}],
+       routes:[{lbl:'🚇 Hotel → Mutianyu Great Wall',type:'nav',g:G(['Zhushikou, Xicheng, Beijing','Mutianyu Great Wall, Huairou, Beijing'],'transit'),a:A(['珠市口,北京','慕田峪长城,怀柔区,北京'],'transit')},{lbl:'📍 Dadong Roast Duck',type:'place',g:GS('Dadong Roast Duck Restaurant Beijing'),a:AS('大董烤鸭北京')}],
+       hotel:{name:'Hedeyuan Courtyard Hotel',url:'https://www.trip.com/hotels/beijing-hotel-detail-841915/',price:'incl.'},luggage:null,options:null},
+      {num:5,date:'Jun 18, Thu',label:'Gardens & Spirit',cats:['culture','food','shop'],
+       items:[{t:'8:30am',txt:'Temple of Heaven — early for tai chi locals',d:'culture',tag:'culture'},{t:'10:30am',txt:'Metro → Lama Temple (~30min)',d:'culture',tag:'culture'},{t:'12:30pm',txt:'Jiaozi dumplings near Lama Temple 🥟',d:'food',tag:'food'},{t:'2pm',txt:'Gulou / Drum Tower — vintage & streetwear (Baochao, Fangjia Hutong)',d:'shop',tag:'shop'},{t:'4:30pm',txt:'Bingtang hulu (candied hawthorn skewers) 🍡',d:'food',tag:'food'},{t:'6:30pm',txt:'Beijing lamb hot pot with sesame dipping sauce',d:'food',tag:'food'}],
+       routes:[{lbl:'🚇 Hotel → Temple of Heaven',type:'nav',g:G(['Zhushikou, Xicheng, Beijing','Temple of Heaven, Beijing'],'transit'),a:A(['珠市口,北京','天坛公园,北京'],'transit')},{lbl:'🚇 Temple of Heaven → Lama Temple',type:'nav',g:G(['Temple of Heaven, Beijing','Yonghe Temple, Dongcheng, Beijing'],'transit'),a:A(['天坛公园,北京','雍和宫,东城区,北京'],'transit')},{lbl:'🚶 Lama Temple → Drum Tower',type:'nav',g:G(['Yonghe Temple, Dongcheng, Beijing','Drum Tower, Dongcheng, Beijing'],'walking'),a:A(['雍和宫,北京','鼓楼,东城区,北京'],'walking')}],
+       hotel:{name:'Hedeyuan Courtyard Hotel',url:'https://www.trip.com/hotels/beijing-hotel-detail-841915/',price:'incl.'},luggage:null,options:null},
+      {num:6,date:'Jun 19, Fri',label:'Royal Retreat + Modernity',cats:['culture','shop','food'],
+       items:[{t:'8:30am',txt:'Summer Palace — allow 3hrs',d:'culture',tag:'culture'},{t:'12pm',txt:'Lunch on the way east',d:'food',tag:'food'},{t:'2:30pm',txt:'Olympic Park — Bird\'s Nest & Water Cube 📸',d:'culture',tag:'culture'},{t:'5pm',txt:'Sanlitun TAIKOO LI — independent streetwear 🛍',d:'shop',tag:'shop'},{t:'7:30pm',txt:'Wangfujing Snack Street — scorpions, stinky tofu 😅',d:'food',tag:'food'}],
+       routes:[{lbl:'🚇 Hotel → Summer Palace',type:'nav',g:G(['Zhushikou, Xicheng, Beijing','Summer Palace, Haidian, Beijing'],'transit'),a:A(['珠市口,北京','颐和园,海淀区,北京'],'transit')},{lbl:'🚇 Summer Palace → Olympic Park',type:'nav',g:G(['Summer Palace, Haidian, Beijing','Beijing Olympic Park, Chaoyang'],'transit'),a:A(['颐和园,北京','奥林匹克公园,朝阳区,北京'],'transit')},{lbl:'🚇 Olympic Park → Sanlitun',type:'nav',g:G(['Beijing Olympic Park, Chaoyang','Sanlitun, Chaoyang, Beijing'],'transit'),a:A(['奥林匹克公园,北京','三里屯,朝阳区,北京'],'transit')}],
+       hotel:{name:'Hedeyuan Courtyard Hotel',url:'https://www.trip.com/hotels/beijing-hotel-detail-841915/',price:'incl.'},
+       luggage:{text:'📦 Ship big bag to Juntels Tai\'an tonight via SF Express — ask hotel reception'},options:null},
+    ]},
+  taian:{name:"Tai'an",color:'#4a7c59',dates:'Jun 20 · Day 7',hotel:"Juntels Tai'an Hongmen · €36.88 / 1 night",cats:['transit','hike','food'],
+    days:[
+      {num:7,date:'Jun 20, Sat',label:"Beijing → Tai'an + Mt Tai",cats:['transit','hike','food'],
+       items:[{t:'early',txt:"Early train Beijing → Tai'an ($34pp)",d:'transit',tag:'transit'},{t:'10-11am',txt:'Arrive — station lockers (~¥20). Big bag at Juntels ✅',d:''},{t:'11:30am',txt:'Lunch in Tai\'an town',d:'food',tag:'food'},{t:'1:30pm',txt:'Walk to Hongmen Gate (hotel is right there!) — start hiking Mt Tai, ~4hrs up',d:'hike',tag:'hike'},{t:'~5:30pm',txt:'Summit — views, golden hour 🌄',d:'hike',tag:'hike'},{t:'~6pm',txt:'Last cable car down (¥100pp) — closes ~6:30pm!',d:''},{t:'6:30pm',txt:'Collect bags from lockers, check in hotel',d:''},{t:'7:30pm',txt:'Dinner in Tai\'an',d:'food',tag:'food'}],
+       routes:[{lbl:"🚄 Beijing → Tai'an",type:'book',g:'https://www.trip.com/trains/china/route/beijing-to-taian/',a:'https://www.trip.com/trains/china/route/beijing-to-taian/'},{lbl:'🚶 Station → Hongmen trailhead',type:'nav',g:G(["Tai'an Railway Station, Shandong",'Hongmen, Taishan Scenic Area'],'walking'),a:A(['泰安火车站','红门,泰山景区,泰安'],'walking')},{lbl:'📍 Mt Tai summit — Jade Emperor Peak',type:'place',g:GS('Mount Tai Jade Emperor Peak'),a:AS('玉皇顶 泰山')}],
+       hotel:{name:"Juntels Tai'an Hongmen Branch",url:'https://www.trip.com/hotels/taian-hotel-detail-425219/',price:'€36.88 (1 night)'},
+       luggage:{text:'📦 Big bag shipped ahead — day pack + carry-on only. Note: Juntels is at Hongmen Gate — walk straight to trailhead! ✅'},options:null}
+    ]},
+  nanjing:{name:'Nanjing',color:'#7c4a6e',dates:'Jun 21 · Day 8',hotel:'Qinhuai River Light Residence · $44.34 / 1 night',cats:['transit','culture','food','shop'],
+    days:[
+      {num:8,date:'Jun 21, Sun',label:"Tai'an → Nanjing full day",cats:['transit','culture','food','shop'],
+       items:[{t:'early',txt:"Train Tai'an → Nanjing ($40pp)",d:'transit',tag:'transit'},{t:'1pm',txt:'Metro Line 2 → Muxuyuan → Ming Xiaoling Mausoleum — Sacred Way, stone animals (~2.5hrs)',d:'culture',tag:'culture'},{t:'3:30pm',txt:'Duck blood vermicelli soup near Fuzimiao 🍜',d:'food',tag:'food'},{t:'5pm',txt:'Nanjing Massacre Memorial — allow 2hrs',d:'culture',tag:'culture'},{t:'7pm',txt:'Fuzimiao — Yunjin brocade, Rain Flower Stones, embroidery',d:'shop',tag:'shop'},{t:'8pm',txt:'Zhonghua Gate City Wall — 5min walk from hotel, golden hour',d:'culture',tag:'culture'},{t:'9pm',txt:'Salted duck dinner 🦆 Pick up vacuum-packed for the train',d:'food',tag:'food'},{t:'10pm',txt:'Qinhuai River lantern stroll 🏮',d:'culture',tag:'culture'}],
+       routes:[{lbl:"🚄 Tai'an → Nanjing",type:'book',g:'https://www.trip.com/trains/china/route/taian-to-nanjing/',a:'https://www.trip.com/trains/china/route/taian-to-nanjing/'},{lbl:'🚇 Hotel → Ming Xiaoling',type:'nav',g:G(['Confucius Temple, Qinhuai, Nanjing','Ming Xiaoling Mausoleum, Xuanwu, Nanjing'],'transit'),a:A(['夫子庙,秦淮区,南京','明孝陵,玄武区,南京'],'transit')},{lbl:'🚇 Ming Xiaoling → Massacre Memorial',type:'nav',g:G(['Ming Xiaoling Mausoleum, Nanjing','Memorial Hall of the Victims in Nanjing Massacre'],'transit'),a:A(['明孝陵,南京','侵华日军南京大屠杀遇难同胞纪念馆'],'transit')},{lbl:'🚶 Memorial → City Wall → Qinhuai',type:'nav',g:G(['Memorial Hall Nanjing Massacre','Zhonghua Gate, Qinhuai, Nanjing'],'walking'),a:A(['南京大屠杀纪念馆','中华门城堡,南京'],'walking')}],
+       hotel:{name:'Nanjing Confucius Temple Qinhuai River Light Residence',url:'https://www.trip.com/hotels/nanjing-hotel-detail-123259854/',price:'$44.34 (1 night)'},
+       luggage:{text:'📦 Ship big bag to Yiting Garden Hotel Hangzhou tonight via SF Express'},options:null}
+    ]},
+  hangzhou:{name:'Hangzhou',color:'#2a6e8a',dates:'Jun 22–23 · Days 9–10',hotel:'Yiting Garden Hotel · $34.07 / 1 night',cats:['transit','culture','food','shop'],
+    days:[
+      {num:9,date:'Jun 22, Mon',label:'Nanjing → Hangzhou full day',cats:['transit','culture','food','shop'],
+       items:[{t:'early',txt:'Train Nanjing → Hangzhou (~1hr, $10pp)',d:'transit',tag:'transit'},{t:'9:30am',txt:'West Lake — Broken Bridge, Bai Causeway (~2hrs)',d:'culture',tag:'culture'},{t:'11:30am',txt:'Leifeng Pagoda (~45min)',d:'culture',tag:'culture'},{t:'12:30pm',txt:'West Lake vinegar fish (西湖醋鱼) 🐟',d:'food',tag:'food'},{t:'2pm',txt:'Didi → Longjing Village — tea terraces, buy direct from farmers 🍵',d:'culture',tag:'culture'},{t:'3:30pm',txt:'Didi → Lingyin Temple — forested hills',d:'culture',tag:'culture'},{t:'5:30pm',txt:'Shopping combo (TBD — see options below)',d:'shop',tag:'shop'},{t:'7pm',txt:'Dongpo pork (东坡肉) dinner',d:'food',tag:'food'},{t:'8:30pm',txt:'West Lake evening stroll by lantern light 🏮',d:'culture',tag:'culture'}],
+       routes:[{lbl:'🚄 Nanjing → Hangzhou',type:'book',g:'https://www.trip.com/trains/china/route/nanjing-to-hangzhou/',a:'https://www.trip.com/trains/china/route/nanjing-to-hangzhou/'},{lbl:'🚶 Hotel → West Lake → Leifeng Pagoda',type:'nav',g:G(['Hangzhou West Lake','Leifeng Pagoda, Hangzhou'],'walking'),a:A(['杭州西湖','雷峰塔,杭州'],'walking')},{lbl:'🚗 West Lake → Longjing Village',type:'nav',g:G(['West Lake, Hangzhou','Longjing Village, Hangzhou'],'driving'),a:A(['西湖,杭州','龙井村,杭州'],'driving')},{lbl:'🚗 Longjing → Lingyin Temple',type:'nav',g:G(['Longjing Village, Hangzhou','Lingyin Temple, Hangzhou'],'driving'),a:A(['龙井村,杭州','灵隐寺,杭州'],'driving')},{lbl:'📍 Hefang Street crafts',type:'place',g:GS('Hefang Street Hangzhou'),a:AS('河坊街,杭州')},{lbl:'📍 Shihuqiao Road vintage',type:'place',g:GS('Shihuqiao Road vintage Hangzhou'),a:AS('石虎桥路 古着 杭州')},{lbl:'📍 Wushan Road Night Market',type:'place',g:GS('Wushan Road Night Market Hangzhou'),a:AS('吴山路夜市,杭州')}],
+       hotel:{name:'Hang Zhou Yiting Garden Hotel',url:'https://www.trip.com/',price:'$34.07 (1 night)'},luggage:null,
+       options:{title:'🛍 Shopping combos (TBD with friend)',text:"A+C (recommended): Hefang Street after lunch + Wushan Night Market before Linhai train\nA+B: Hefang Street + Shihuqiao Road vintage (skip Lingyin Temple)\nB+C: Shihuqiao vintage + Wushan Night Market"}},
+      {num:10,date:'Jun 23, Tue',label:'Hangzhou → Linhai',cats:['transit','shop','food'],
+       items:[{t:'morning',txt:'West Lake sunrise or overflow from yesterday',d:'culture',tag:'culture'},{t:'afternoon',txt:'Shopping combo (A, B or C — TBD)',d:'shop',tag:'shop'},{t:'~6pm',txt:'Train to Linhai ($12pp)',d:'transit',tag:'transit'},{t:'8pm',txt:'Drop bags at Jinjiang Inn',d:''},{t:'8:30pm',txt:'Ziyang Street food crawl — beef noodle, seaweed pancake, rice cakes 🍡',d:'food',tag:'food'},{t:'9:30pm',txt:'East Lake evening stroll 🌙',d:''},{t:'10pm',txt:'18RESERVA ROASTERY — specialty coffee nightcap ☕',d:'food',tag:'food'}],
+       routes:[{lbl:'🚄 Hangzhou → Linhai',type:'book',g:'https://www.trip.com/trains/china/route/hangzhou-to-linhai/',a:'https://www.trip.com/trains/china/route/hangzhou-to-linhai/'},{lbl:'🚶 Linhai station → Ziyang Street',type:'nav',g:G(['Linhai Railway Station, Taizhou, Zhejiang','Ziyang Old Street, Linhai'],'walking'),a:A(['临海火车站','紫阳街,临海市'],'walking')}],
+       hotel:{name:'Jinjiang Inn Linhai Chonghemen',url:'https://www.trip.com/hotels/linhai-hotel-detail-509368/',price:'$75.96 / 3 nights total'},
+       luggage:{text:'📦 Big bag shipped to CitiGO Shanghai already — day pack + carry-on only for 3 hiking days 🎉'},options:null}
+    ]},
+  linhai:{name:'Linhai',color:'#9a7c2a',dates:'Jun 24–25 · Days 11–12',hotel:'Jinjiang Inn Chonghemen · $75.96 / 3 nights',cats:['hike','food'],
+    days:[
+      {num:11,date:'Jun 24, Wed',label:'Yanbang Village Hike',cats:['hike','food'],
+       items:[{t:'7:30am',txt:'Hearty breakfast 🍳',d:'food',tag:'food'},{t:'8:30am',txt:'Didi to Yanbang Water Trail, Xinchang County (~1-1.5hr, ~$10pp)',d:''},{t:'10am',txt:'Hike — ancient stone trail, riverside paths, stone bridges (~5-8km, easy)',d:'hike',tag:'hike'},{t:'12:30pm',txt:'Picnic lunch by the river 🌿',d:'food',tag:'food'},{t:'2pm',txt:'Continue — optional swimming 🏊',d:'hike',tag:'hike'},{t:'4pm',txt:'Didi back to Linhai',d:''},{t:'7:30pm',txt:'Mabing stuffed pancake + pork rib noodles',d:'food',tag:'food'}],
+       routes:[{lbl:'🚗 Linhai → Yanbang trailhead',type:'nav',g:G(['Linhai, Taizhou, Zhejiang','Yanbang Village, Xinchang, Shaoxing'],'driving'),a:A(['临海市','岩帮村,新昌县,绍兴'],'driving')},{lbl:'📍 Yanbang Water Trail',type:'place',g:GS('Yanbang Water Trail Xinchang Zhejiang'),a:AS('岩帮水径 新昌 浙江')}],
+       hotel:{name:'Jinjiang Inn Linhai Chonghemen',url:'https://www.trip.com/hotels/linhai-hotel-detail-509368/',price:'incl.'},luggage:null,options:null},
+      {num:12,date:'Jun 25, Thu',label:'Yandang Mountain Day Trip',cats:['hike','food'],
+       items:[{t:'8am',txt:'Didi to Yandang Mountain (~$10pp)',d:''},{t:'9:30am',txt:'Chaoyang Cave → Lingfeng trail — 1.9mi, hard, caves + waterfalls 🌊',d:'hike',tag:'hike'},{t:'11:30am',txt:'Lingyan Scenic Area — 4.9★, moderate, ~1.5hrs',d:'hike',tag:'hike'},{t:'1pm',txt:'Lunch near scenic area',d:'food',tag:'food'},{t:'2pm',txt:'Fangdong Trail — 5.0★, moderate, ~1.5hrs',d:'hike',tag:'hike'},{t:'3:30pm',txt:'Dalong Waterfall (optional)',d:'hike',tag:'hike'},{t:'5pm',txt:'Didi back to Linhai',d:''},{t:'7pm',txt:'Jiyan flavored lamb — local Taizhou specialty 🐑',d:'food',tag:'food'}],
+       routes:[{lbl:'🚗 Linhai → Yandang Mountain',type:'nav',g:G(['Linhai, Taizhou, Zhejiang','Yandang Mountain Scenic Area, Yueqing, Wenzhou'],'driving'),a:A(['临海市','雁荡山风景区,乐清市,温州'],'driving')},{lbl:'📍 Chaoyang Cave → Lingfeng',type:'place',g:GS('Chaoyang Cave Yandang Mountain'),a:AS('朝阳洞 灵峰 雁荡山')},{lbl:'📍 Lingyan Scenic Area',type:'place',g:GS('Lingyan Scenic Area Yandang Mountain'),a:AS('灵岩景区 雁荡山')}],
+       hotel:{name:'Jinjiang Inn Linhai Chonghemen',url:'https://www.trip.com/hotels/linhai-hotel-detail-509368/',price:'incl.'},luggage:null,options:null}
+    ]},
+  tiantai:{name:'Tiantai',color:'#2a5a7c',dates:'Jun 26 · Day 13',hotel:'Atour Hotel Tiantai · $49.03 / 1 night',cats:['transit','hike','culture','food'],
+    days:[
+      {num:13,date:'Jun 26, Fri',label:'Linhai → Tiantai Mountain',cats:['transit','hike','culture','food'],
+       items:[{t:'morning',txt:'Train/bus to Tiantai ($3pp)',d:'transit',tag:'transit'},{t:'9am',txt:'Guoqing Temple — free, 7am-4pm, arrive early to beat crowds',d:'culture',tag:'culture'},{t:'11:30am',txt:'Combo ticket: Grand Waterfall + Qiongtai Xiangu (165 RMB pp)',d:''},{t:'12pm',txt:'Qiongtai Xiangu — Rainbow Waterfall, hanging corridor (~2hrs)',d:'hike',tag:'hike'},{t:'2pm',txt:'Glass walkway + Sky Ladder (30 RMB — 36 second ride!)',d:'hike',tag:'hike'},{t:'3pm',txt:'Walk down via Grand Waterfall — all downhill, very photogenic',d:'hike',tag:'hike'},{t:'4:30pm',txt:'Last shuttle buses at 5pm — don\'t miss!',d:''},{t:'6pm',txt:'Check in Atour Hotel, dinner',d:'food',tag:'food'}],
+       routes:[{lbl:'🚄 Linhai → Tiantai',type:'book',g:'https://www.trip.com/trains/china/route/linhai-to-tiantai/',a:'https://www.trip.com/trains/china/route/linhai-to-tiantai/'},{lbl:'📍 Guoqing Temple',type:'place',g:GS('Guoqing Temple Tiantai Mountain Zhejiang'),a:AS('国清寺,天台山,浙江')},{lbl:'📍 Qiongtai Xiangu',type:'place',g:GS('Qiongtai Xiangu Tiantai Mountain'),a:AS('琼台仙谷,天台山')},{lbl:'📍 Tiantai Grand Waterfall',type:'place',g:GS('Tiantai Mountain Grand Waterfall'),a:AS('天台山大瀑布,浙江')}],
+       hotel:{name:'Taizhou Tiantai Atour Hotel',url:'https://www.trip.com/hotels/tiantai-hotel-detail/',price:'$49.03 (1 night)'},luggage:null,options:null}
+    ]},
+  shanghai:{name:'Shanghai',color:'#1a1714',dates:'Jun 27–29 · Days 14–16',hotel:'CitiGO Hotel Xujiahui · $56.22 / 1 night',cats:['transit','culture','shop','food'],
+    days:[
+      {num:14,date:'Jun 27, Sat',label:'Taizhou → Shanghai arrival',cats:['transit','shop','food'],
+       items:[{t:'10am',txt:'Train Taizhou → Shanghai Hongqiao (~2hrs, $30pp)',d:'transit',tag:'transit'},{t:'12:15pm',txt:'Metro to CitiGO Xujiahui — big bag already waiting 🎉',d:''},{t:'1pm',txt:'Xiaolongbao at a proper local spot 🥟',d:'food',tag:'food'},{t:'2:30pm',txt:'Tianzifang — French Concession artsy alleyways, indie boutiques',d:'shop',tag:'shop'},{t:'4:30pm',txt:'French Concession walk — tree-lined streets, old villas, cafés',d:'culture',tag:'culture'},{t:'6:30pm',txt:'Red braised pork (红烧肉) or hairy crab 🦀',d:'food',tag:'food'},{t:'8:30pm',txt:'Hotel, rest — big day tomorrow',d:''}],
+       routes:[{lbl:'🚄 Taizhou → Shanghai',type:'book',g:'https://www.trip.com/trains/china/route/taizhou-to-shanghai/',a:'https://www.trip.com/trains/china/route/taizhou-to-shanghai/'},{lbl:'🚇 Hongqiao → CitiGO Xujiahui (Line 9)',type:'nav',g:G(['Shanghai Hongqiao Railway Station','Xujiahui, Xuhui, Shanghai'],'transit'),a:A(['上海虹桥火车站','徐家汇,徐汇区,上海'],'transit')},{lbl:'🚶 Hotel → Tianzifang',type:'nav',g:G(['Xujiahui, Xuhui, Shanghai','Tianzifang, Xuhui, Shanghai'],'walking'),a:A(['徐家汇,上海','田子坊,徐汇区,上海'],'walking')}],
+       hotel:{name:'CitiGO Hotel Xujiahui Shanghai',url:'https://www.trip.com/hotels/shanghai-hotel-detail-17284331/',price:'$56.22 (1 night) · luggage storage confirmed ✅'},
+       luggage:{text:'📦 Big bag shipped from Linhai already at hotel — reunited! 🎉'},options:null},
+      {num:15,date:'Jun 28, Sun',label:'Shanghai full day → spa night',cats:['culture','shop','food'],
+       items:[{t:'8:30am',txt:'The Bund — morning light, Pudong skyline across the river',d:'culture',tag:'culture'},{t:'10am',txt:'Yu Garden & Old Town — closed Mondays (it\'s Sunday ✅)',d:'culture',tag:'culture'},{t:'12pm',txt:'Shengjianbao (pan-fried dumplings) or crab roe noodles',d:'food',tag:'food'},{t:'2pm',txt:'Xintiandi or Tianzifang — last shopping of the trip 🛍',d:'shop',tag:'shop'},{t:'4pm',txt:'Coffee break, sort bags — hotel stores big bag + carry-on overnight',d:''},{t:'6pm',txt:'Final celebratory dinner 🥂',d:'food',tag:'food'},{t:'9:30pm',txt:'Didi to Newstar Pudong Spa (288 Dongxiu Rd) — check in',d:''},{t:'night',txt:'Pools, saunas, jjimjilbang, food — rest up 🧖',d:''}],
+       routes:[{lbl:'🚇 Hotel → The Bund',type:'nav',g:G(['Xujiahui, Xuhui, Shanghai','The Bund, Huangpu, Shanghai'],'transit'),a:A(['徐家汇,上海','外滩,黄浦区,上海'],'transit')},{lbl:'🚶 Bund → Yu Garden',type:'nav',g:G(['The Bund, Huangpu, Shanghai','Yu Garden, Huangpu, Shanghai'],'walking'),a:A(['外滩,上海','豫园,黄浦区,上海'],'walking')},{lbl:'🚇 Yu Garden → Tianzifang',type:'nav',g:G(['Yu Garden, Huangpu, Shanghai','Tianzifang, Xuhui, Shanghai'],'transit'),a:A(['豫园,上海','田子坊,徐汇区,上海'],'transit')},{lbl:'🚗 Hotel → Newstar Pudong Spa',type:'nav',g:G(['Xujiahui, Xuhui, Shanghai','288 Dongxiu Road, Pudong, Shanghai'],'driving'),a:A(['徐家汇,上海','东秀路288号,浦东新区,上海'],'driving')},{lbl:'📍 Newstar Pudong Spa',type:'place',g:GS('Newstar Korean Spa 288 Dongxiu Road Pudong Shanghai'),a:AS('纽斯桑拿 东秀路288号 浦东 上海')}],
+       hotel:{name:'CitiGO Hotel Xujiahui → Newstar Pudong Spa',url:'',price:'Spa: walk-in · bring passport · arrive ~9:30pm'},luggage:null,
+       options:{title:'⚠️ Spa plan — important timing',text:"Both flights depart PVG Jun 29 — Person B at 10:55am, Person A at 11:40am\nLeave spa by 6:00am\nDidi to Newstar → PVG is only ~20-25min ✅\nSwing by CitiGO to collect stored luggage on the way\nArrive PVG by 7:30am — comfortable buffer for both flights"}},
+      {num:16,date:'Jun 29, Mon',label:'Spa → fly home ✈',cats:['transit'],
+       items:[{t:'6am',txt:'Wake up, grab spa breakfast',d:'food',tag:'food'},{t:'6:15am',txt:'Collect luggage from CitiGO (stored overnight)',d:''},{t:'6:30am',txt:'Didi to Pudong Airport PVG (~20-25min)',d:'transit',tag:'transit'},{t:'7am',txt:'Arrive PVG — check in, security',d:''},{t:'10:55am',txt:'Person B → PVG departure → Milan ✈ €310',d:'transit',tag:'transit'},{t:'11:40am',txt:'Person A → PVG departure → Russia ✈ $460',d:'transit',tag:'transit'}],
+       routes:[{lbl:'🚗 CitiGO → Pudong Airport PVG',type:'nav',g:G(['Xujiahui, Xuhui, Shanghai','Shanghai Pudong International Airport'],'driving'),a:A(['徐家汇,上海','上海浦东国际机场'],'driving')},{lbl:'📍 Pudong Airport PVG',type:'place',g:GS('Shanghai Pudong International Airport'),a:AS('上海浦东国际机场')}],
+       hotel:null,luggage:null,options:null}
+    ]}
+};
+
+// RENDER CITY LIST
+const cityListEl = document.getElementById('cityList');
+Object.entries(cities).forEach(([id,city])=>{
+  const cats=[...new Set(city.cats)];
+  const catHtml=cats.map(c=>{const l={food:'🍜 Food',shop:'🛍 Shop',culture:'🏛 Culture',hike:'🥾 Hike',transit:'🚄 Transit'};return `<span class="cat-tag ${c}">${l[c]||c}</span>`;}).join('');
+  const row=document.createElement('div');
+  row.className='city-row';
+  row.innerHTML=`<div class="city-color" style="background:${city.color}"></div>
+    <div class="city-row-info">
+      <div class="city-row-name">${city.name}</div>
+      <div class="city-row-dates">${city.dates}</div>
+      <div class="city-row-hotel">🏨 ${city.hotel}</div>
+      <div class="city-row-cats">${catHtml}</div>
+    </div>
+    <div class="city-chevron">›</div>`;
+  row.onclick=()=>openCity(id);
+  cityListEl.appendChild(row);
+});
+
+function openCity(id){
+  const city=cities[id];
+  document.getElementById('cityHeaderBar').innerHTML=`
+    <span class="city-header-dot" style="background:${city.color}"></span>
+    <span class="city-header-name">${city.name}</span>
+    <div class="city-header-meta">${city.dates}</div>`;
+  document.getElementById('cityHotelConfirm').innerHTML=`✅ ${city.hotel} · Foreigners confirmed`;
+  const allCats=[...new Set(city.days.flatMap(d=>d.cats))];
+  const fb=document.getElementById('filterBar');
+  fb.innerHTML=`<div class="chip active" data-cat="all">All</div>`+allCats.map(c=>{const l={food:'🍜 Food',shop:'🛍 Shop',culture:'🏛 Culture',hike:'🥾 Hike',transit:'🚄 Transit'};return `<div class="chip ${c}" data-cat="${c}">${l[c]||c}</div>`;}).join('');
+  fb.querySelectorAll('.chip').forEach(chip=>chip.onclick=()=>filterDays(chip.dataset.cat,chip));
+  const dw=document.getElementById('daysWrap');
+  dw.innerHTML='';
+  city.days.forEach(d=>{
+    const card=document.createElement('div');
+    card.className='day-card';
+    card.dataset.cats=JSON.stringify(d.cats);
+    const catL={food:'🍜 Food',shop:'🛍 Shop',culture:'🏛 Culture',hike:'🥾 Hike',transit:'🚄 Transit'};
+    const catsHtml=[...new Set(d.cats)].map(c=>`<span class="cat-tag ${c}">${catL[c]||c}</span>`).join('');
+    const tlHtml=d.items.map((it,idx)=>{
+      const dc='tl-d'+(it.d?' '+it.d:'');
+      const th=it.tag?`<span class="itag ${it.tag}">${it.tag}</span>`:'';
+      const isLast=idx===d.items.length-1;
+      return `<div class="tl-row"><div class="tl-l"><div class="tl-t">${it.t}</div><div class="${dc}"></div>${!isLast?'<div class="tl-ln"></div>':''}</div><div class="tl-c">${it.txt}${th}</div></div>`;
+    }).join('');
+    const routesHtml=d.routes?`<div class="routes-wrap">${d.routes.map(r=>{
+      if(r.type==='book')return `<div class="route-row"><span class="route-lbl">${r.lbl}</span><div class="map-btns"><a class="mb bk" href="${r.g}" target="_blank">🚄 Book</a></div></div>`;
+      return `<div class="route-row"><span class="route-lbl">${r.lbl}</span><div class="map-btns"><a class="mb goo" href="${r.g}" target="_blank">🌍</a><a class="mb gao" href="${r.a}" target="_blank">🇨🇳</a></div></div>`;
+    }).join('')}</div>`:'';
+    const hotelHtml=d.hotel?`<div class="hotel-row"><span>🏨 <a href="${d.hotel.url}" target="_blank">${d.hotel.name}</a></span><span>${d.hotel.price}</span></div>`:'';
+    const lugHtml=d.luggage?`<div class="note-box note-lug">${d.luggage.text}</div>`:'';
+    const optHtml=d.options?`<div class="note-box note-opt"><strong>${d.options.title}</strong>${d.options.text.split('\n').map(l=>`<div>• ${l}</div>`).join('')}</div>`:'';
+    card.innerHTML=`
+      <div class="card-top" onclick="toggleCard(this)">
+        <div class="card-num">Day ${d.num}</div>
+        <div class="card-info"><div class="card-date">${d.date}</div><div class="card-label">${d.label}</div></div>
+        <div class="card-chev" id="chev-${d.num}">›</div>
+      </div>
+      <div class="card-cats">${catsHtml}</div>
+      <div class="card-body" id="body-${d.num}"><div class="tl">${tlHtml}</div>${routesHtml}${hotelHtml}${lugHtml}${optHtml}</div>`;
+    dw.appendChild(card);
+  });
+  switchScreen('city',null);
+}
+
+function filterDays(cat,chip){
+  document.querySelectorAll('#filterBar .chip').forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  document.querySelectorAll('#daysWrap .day-card').forEach(card=>{
+    const cats=JSON.parse(card.dataset.cats||'[]');
+    card.classList.toggle('hidden',cat!=='all'&&!cats.includes(cat));
+  });
+}
+
+function toggleCard(top){
+  const card=top.closest('.day-card');
+  const num=card.querySelector('.card-num').textContent.replace('Day','').trim();
+  const body=document.getElementById('body-'+num);
+  const chev=document.getElementById('chev-'+num);
+  if(body){const open=body.classList.toggle('open');chev.classList.toggle('open',open);}
+}
+
+function switchScreen(id,btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(id==='home')document.querySelector('[onclick*="home"]').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function goHome(){
+  switchScreen('home',null);
+  document.querySelector('[onclick*="home"]').classList.add('active');
+}
+</script>
+</body>
+</html>
